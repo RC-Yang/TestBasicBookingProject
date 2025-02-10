@@ -1,0 +1,5 @@
+com\test\controller\EntryController.class
+com\test\vo\Authority.class
+com\test\config\TestConfiguration.class
+com\test\BasicBookingProjectApplication.class
+com\test\vo\User.class
