@@ -7,6 +7,8 @@ import org.springframework.boot.web.servlet.DispatcherType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,26 +21,34 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 @Configuration
 public class TestConfiguration {
 
-	@Autowired
-    private DataSource dataSource; // Spring Boot 會自動注入 DataSource
+//	@Autowired
+//    private DataSource dataSource; // Spring Boot 會自動注入 DataSource
 
 	//要透過該物件來檢查用戶權限
-    @Bean
-    public UserDetailsService userDetailsService() {
-    	JdbcUserDetailsManager manager = new JdbcUserDetailsManager(dataSource);//具體則是實作該物件
+//    @Bean
+//    public UserDetailsService userDetailsService() {
+//    	JdbcUserDetailsManager manager = new JdbcUserDetailsManager(dataSource);//具體則是實作該物件
+//
+//        manager.setUsersByUsernameQuery("SELECT account, password, enabled FROM user WHERE account = ?");
+//        //不是寫成
+//        //manager.setUsersByUsernameQuery("SELECT account, pwd, active FROM user WHERE account = ? and pwd = ?");
+//        //是因為密碼的驗證，由Spring Security內部處理
+//
+//        //manager.setAuthoritiesByUsernameQuery("SELECT id, role FROM authorites WHERE id= user_type的值");
+//        //這要用join來實作
+//        manager.setAuthoritiesByUsernameQuery(
+//        	    "SELECT u.account, a.authority FROM user u JOIN authorities a ON u.user_type = a.id WHERE u.account = ?");
+//
+//        return manager;
+//    }
+	
+	//必須註冊該物件，才能查找到userDetailService物件
+	//負責查找到userDetailService物件，再轉交給Spring Security自動驗證
+	@Bean
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+	    return authenticationConfiguration.getAuthenticationManager();//密碼的驗證，由其內部處理
+	}
 
-        manager.setUsersByUsernameQuery("SELECT account, password, enabled FROM user WHERE account = ?");
-        //不是寫成
-        //manager.setUsersByUsernameQuery("SELECT account, pwd, active FROM user WHERE account = ? and pwd = ?");
-        //是因為密碼的驗證，由Spring Security內部處理
-
-        //manager.setAuthoritiesByUsernameQuery("SELECT id, role FROM authorites WHERE id= user_type的值");
-        //這要用join來實作
-        manager.setAuthoritiesByUsernameQuery(
-        	    "SELECT u.account, a.authority FROM user u JOIN authorities a ON u.user_type = a.id WHERE u.account = ?");
-
-        return manager;
-    }
     
     //允許明碼密碼
     @Bean
