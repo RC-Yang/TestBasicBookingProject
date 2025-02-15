@@ -72,10 +72,10 @@ public class TestConfiguration {
     	        .anyRequest().authenticated())
     	.formLogin(form -> form
                 .loginPage("/login")
-                .loginProcessingUrl("/testLogin")//設定當該action的表單提交後，Spring Security要攔截該表單來檢查用戶
+                .loginProcessingUrl("/testLogin")//設定當該action的表單提交後，Spring Security要攔截該表單來驗證用戶
                 .usernameParameter("account")
                 .passwordParameter("password")
-                //.defaultSuccessUrl("/index.html", true)// 登入成功後導向首頁
+                .defaultSuccessUrl("/index.html", true)// 用戶驗證成功後，以該行進入controller，這樣就會到templates去找該index.html
                 .permitAll())
         .anonymous(anonymous -> anonymous.disable())
     	.build();
